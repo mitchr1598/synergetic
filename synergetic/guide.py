@@ -21,17 +21,9 @@ uStaffContracts = Base.classes.uStaffContract
 
 def main():
     atten_master = create_attendance_master()
-
-    print(atten_master.__dict__)
-    print(repr(atten_master.__table__))
-    for col in atten_master.__table__.columns:
-        print(repr(col))
-    print(repr(uCovidVaccine.__table__))
-    print(repr(uCovidVaccine.__table__._autoincrement_column))
-    print(repr(atten_master.__table__._autoincrement_column))
     with Synergetic.test() as session:
         session.add(atten_master)
-        #test.rollback()
+        #session.rollback()
         session.commit()
 
 
