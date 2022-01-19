@@ -118,6 +118,12 @@ def create_t_attendances(ID=88888, PossibleAbsenceCode='', PossibleDescription='
     :param NonAttendCreatedAbsenceEventsFlag:
     :return:
     """
+    if PossibleAbsenceCode == '' and AttendedFlag == 0:
+        PossibleAbsenceCode = 'ABS'
+    if LateArrivalFlag == 1 and LatearrivalTime is None:
+        LatearrivalTime = dt.datetime.now()
+    if EarlyDepartureFlag == 1 and EarlyDepartureTime is None:
+        EarlyDepartureTime = dt.datetime.now()
     if NonAttendCreatedAbsenceEventsFlag is None:
         NonAttendCreatedAbsenceEventsFlag = 1 if AbsenceEventsSeq > 0 and AttendedFlag == 1 else 0
     # Get all the local arguments, but filtered out the ones that haven't been set
