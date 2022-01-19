@@ -131,6 +131,64 @@ def create_t_attendances(ID=88888, PossibleAbsenceCode='', PossibleDescription='
     return tAttendances(**args)
 
 
+def create_absence_events(SupersededByAbsenceEventsSeq=None, AbsenceEventTypeCode=None, ID=77777,
+                          EventDateTime=dt.datetime.combine(dt.date.today(), dt.time(0, 0, 0)),
+                          EventDate=None, EventTime=None, CreatedByID=-999,
+                          CreatedDate=None, ModifiedByID=None, ModifiedDate=None,
+                          AbsenceTypeCode='', AbsenceReasonCode='', SchoolInOutStatus='', EnteredInAdvanceFlag=0,
+                          SystemGeneratedFlag=0, SystemProcessNumber=0, NoteReceivedFlag=0, ContactMadeFlag=0,
+                          ApprovedFlag=0, ReportedByID=None, ReportedByName='', EventComment='',
+                          LeavingWithID=None, AbsencePeriodCode=None, ContactReceivedFlag=0, NoteMadeFlag=0,
+                          TerminalCode='', LinkedID=None):
+    """
+        Creates an absence events instance with default arguments.
+        Important args: ID, CreatedByID, AbsencePeriodCode
+        :param SupersededByAbsenceEventsSeq:
+        :param AbsenceEventTypeCode:
+        :param ID:
+        :param EventDateTime:
+        :param EventDate:
+        :param EventTime:
+        :param CreatedByID:
+        :param CreatedDate:
+        :param ModifiedByID:
+        :param ModifiedDate:
+        :param AbsenceTypeCode:
+        :param AbsenceReasonCode:
+        :param SchoolInOutStatus:
+        :param EnteredInAdvanceFlag:
+        :param SystemGeneratedFlag:
+        :param SystemProcessNumber:
+        :param NoteReceivedFlag:
+        :param ContactMadeFlag:
+        :param ApprovedFlag:
+        :param ReportedByID:
+        :param ReportedByName:
+        :param EventComment:
+        :param LeavingWithID:
+        :param AbsencePeriodCode:
+        :param ContactReceivedFlag:
+        :param NoteMadeFlag:
+        :param TerminalCode:
+        :param LinkedID:
+        :return:
+        """
+    if EventDate is None:
+        EventDate = EventDateTime
+    if CreatedDate is None:
+        CreatedDate = EventDateTime
+    if ModifiedByID is None:
+        ModifiedByID = CreatedByID
+    if ModifiedDate is None:
+        ModifiedDate = EventDateTime
+    if AbsenceTypeCode is None:
+        AbsenceTypeCode = "ABS"
+
+    args = {key: value for key, value in locals().items() if value is not None}
+    return AttendanceMaster(**args)
+
+
+
 """
 
 CLASSES:
