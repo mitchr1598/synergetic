@@ -133,7 +133,7 @@ def create_t_attendances(ID=88888, PossibleAbsenceCode='', PossibleDescription='
 
 def create_absence_events(SupersededByAbsenceEventsSeq=None, AbsenceEventTypeCode=None, ID=77777,
                           EventDateTime=dt.datetime.combine(dt.date.today(), dt.time(0, 0, 0)),
-                          EventDate=None, EventTime=None, CreatedByID=-999,
+                          EventDate=None, EventTime=None, CreatedByID=-99999,
                           CreatedDate=None, ModifiedByID=None, ModifiedDate=None,
                           AbsenceTypeCode='', AbsenceReasonCode='', SchoolInOutStatus='', EnteredInAdvanceFlag=0,
                           SystemGeneratedFlag=0, SystemProcessNumber=0, NoteReceivedFlag=0, ContactMadeFlag=0,
