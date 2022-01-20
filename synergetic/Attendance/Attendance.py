@@ -90,7 +90,7 @@ def create_attendance_master(CreatedDate=dt.datetime.now(), CreatedByID=None, Mo
     return AttendanceMaster(**args)
 
 
-def create_t_attendances(ID=88888, PossibleAbsenceCode='', PossibleDescription='', AttendedFlag=1,
+def create_t_attendances(ID=88888, PossibleAbsenceCode='', PossibleDescription='', AttendedFlag=0,
                          ModifiedDate=dt.datetime.combine(dt.date.today(), dt.time(0, 0, 0)), ModifiedByID=99999,
                          PossibleReasonCode='', UserFlag1=0, UserFlag2=0, UserFlag3=0, UserFlag4=0, UserFlag5=0,
                          LateArrivalFlag=0, LatearrivalTime=None, EarlyDepartureFlag=0, EarlyDepartureTime=None,
