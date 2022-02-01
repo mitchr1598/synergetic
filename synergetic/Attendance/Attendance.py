@@ -44,31 +44,38 @@ def create_attendance_master(CreatedDate=dt.datetime.now(), CreatedByID=None, Mo
                              AttendanceOfficerModeFlag=0, SystemProcessNumber=0, SeqLinkedTo=None,
                              MarkRollAsMultiPeriodFlag=None):
     """
+    /Essentially the class the roll is being taken for. Can sometimes get multiple entries per class, perhaps when the
+    roll has been exited and gone back into/
+
     Create an AttendanceMaster object with default values. Passing no parameters will create a 'test' record.
     The value of StaffID will populate CreatedByID and ModifiedByID if you don't pass those
-    :param CreatedDate:
-    :param CreatedByID:
-    :param ModifiedDate:
-    :param ModifiedByID:
-    :param FileType:
-    :param FileYear:
-    :param FileSemester:
-    :param ClassCampus:
-    :param ClassCode:
-    :param StaffID:
-    :param AttendanceDate:
-    :param AttendancePeriod:
-    :param AttendanceDateTimeFrom:
-    :param AttendanceDateTimeTo:
-    :param AttendanceDayNumber:
-    :param TimetableGroup:
-    :param ClassCancelledFlag:
-    :param AttendanceOfficerModeFlag:
-    :param SystemProcessNumber:
-    :param SeqLinkedTo:
-    :param MarkRollAsMultiPeriodFlag:
+
+    //AttendanceMasterSeq: Primary Key. No need to specify
+    :param CreatedDate: Time the roll was taken
+    :param CreatedByID: ID of the staff member taking the roll  (different to StaffID when a relief is taken)
+    :param ModifiedDate: Appears to be the same as CreatedDate for most cases
+    :param ModifiedByID: Appears to be the same as CreatedByID for most cases
+    :param FileType: FileType for the class
+    :param FileYear: FileYear for the class
+    :param FileSemester: FileSemester for the class
+    :param ClassCampus: ClassCampus for the class
+    :param ClassCode: ClassCode for the class
+    :param StaffID: Staff Member of the class  (different to StaffID when a CreatedByID is taken)
+    :param AttendanceDate: Date of class
+    :param AttendancePeriod: Period of class
+    :param AttendanceDateTimeFrom: Start datetime of class
+    :param AttendanceDateTimeTo: End datetime of class
+    :param AttendanceDayNumber: Day in timetable cycle
+    :param TimetableGroup: Always 'T' for academic classes
+    :param ClassCancelledFlag: Whether the class is cancelled, never happened for academic classes
+    :param AttendanceOfficerModeFlag: Unknown, always 0
+    :param SystemProcessNumber: Unknown, always 0
+    :param SeqLinkedTo: Other record that related to. Maybe used when multiperiod?? but not always
+    :param MarkRollAsMultiPeriodFlag: Roll as multi-period
     :return:
     """
+
+
     if CreatedByID is None:
         CreatedByID = StaffID
     if ModifiedDate is None:
@@ -89,32 +96,38 @@ def create_attendance_master(CreatedDate=dt.datetime.now(), CreatedByID=None, Mo
     return AttendanceMaster(**args)
 
 
-def create_t_attendances(AttendanceMasterSeq = None, ID=88888, PossibleAbsenceCode='', PossibleDescription='', AttendedFlag=0,
-                         ModifiedDate=dt.datetime.combine(dt.date.today(), dt.time(0, 0, 0)), ModifiedByID=99999,
+def create_t_attendances(AttendanceMasterSeq=None, ID=88888, PossibleAbsenceCode='', PossibleDescription='', AttendedFlag=0,
+                         ModifiedDate=None, ModifiedByID=99999,
                          PossibleReasonCode='', UserFlag1=0, UserFlag2=0, UserFlag3=0, UserFlag4=0, UserFlag5=0,
                          LateArrivalFlag=0, LatearrivalTime=None, EarlyDepartureFlag=0, EarlyDepartureTime=None,
                          AbsenceEventsSeq=0, NonAttendCreatedAbsenceEventsFlag=None):
     """
+    /Each Student attendance/
+
     Creates a tAttendances instance with default arguments.
     Important args: ID, AttendedFlag, ModifiedByID, ModifiedDate
-    :param ID:
-    :param PossibleAbsenceCode:
-    :param PossibleDescription:
-    :param AttendedFlag:
-    :param ModifiedDate:
-    :param ModifiedByID:
-    :param PossibleReasonCode:
-    :param UserFlag1:
-    :param UserFlag2:
-    :param UserFlag3:
-    :param UserFlag4:
-    :param UserFlag5:
-    :param LateArrivalFlag:
-    :param LatearrivalTime:
-    :param EarlyDepartureFlag:
-    :param EarlyDepartureTime:
-    :param AbsenceEventsSeq:
-    :param NonAttendCreatedAbsenceEventsFlag:
+
+    //AttendanceSeq: Primary Key. No need to specify
+    :param AttendanceMasterSeq: Foreign key, the roll record it's being entered for
+    :param ID: Student ID
+    :param PossibleAbsenceCode: From luAbsenceType
+    :param PossibleDescription: Custom absence comment
+    :param AttendedFlag: Attended? 1 or 0
+    :param ModifiedDate: datetime record was modified
+    :param ModifiedByID: Who modified
+    :param PossibleReasonCode: Not used, probably links to luAbsenceReason
+    :param UserFlag1: Can't determine the use
+    :param UserFlag2
+    :param UserFlag3
+    :param UserFlag4
+    :param UserFlag5
+    :param LateArrivalFlag: Whether the student arrived late
+    :param LatearrivalTime: Time (sometimes datetime) of Late arrival, NULL when not a late arrival
+    :param EarlyDepartureFlag: Whether the student left early
+    :param EarlyDepartureTime: Time (sometimes datetime) of early departure, NULL when not a early departure
+    :param AbsenceEventsSeq: Link to the absence events table
+    :param NonAttendCreatedAbsenceEventsFlag: Absence event created by not marked as absent
+
     :return:
     """
     if PossibleAbsenceCode == '' and AttendedFlag == 0:
@@ -140,38 +153,46 @@ def create_absence_events(SupersededByAbsenceEventsSeq=None, AbsenceEventTypeCod
                           LeavingWithID=None, AbsencePeriodCode=None, ContactReceivedFlag=0, NoteMadeFlag=0,
                           TerminalCode='', LinkedID=None):
     """
-        Creates an absence events instance with default arguments.
-        Important args: ID, CreatedByID, AbsencePeriodCode
-        :param SupersededByAbsenceEventsSeq:
-        :param AbsenceEventTypeCode:
-        :param ID:
-        :param EventDateTime:
-        :param EventDate:
-        :param EventTime:
-        :param CreatedByID:
-        :param CreatedDate:
-        :param ModifiedByID:
-        :param ModifiedDate:
-        :param AbsenceTypeCode:
-        :param AbsenceReasonCode:
-        :param SchoolInOutStatus:
-        :param EnteredInAdvanceFlag:
-        :param SystemGeneratedFlag:
-        :param SystemProcessNumber:
-        :param NoteReceivedFlag:
-        :param ContactMadeFlag:
-        :param ApprovedFlag:
-        :param ReportedByID:
-        :param ReportedByName:
-        :param EventComment:
-        :param LeavingWithID:
-        :param AbsencePeriodCode:
-        :param ContactReceivedFlag:
-        :param NoteMadeFlag:
-        :param TerminalCode:
-        :param LinkedID:
-        :return:
-        """
+    /Each Absence event/
+
+    Creates an absence events instance with default arguments.
+    Important args: ID, CreatedByID, AbsencePeriodCode
+    //AbsenceEventsSeq: Primary Key. No need to specify
+    //MasterAbsenceEventsSeq: Mostly the same as AbsenceEventsSeq, but is different when both 'in' and 'out' is entered
+    :param SupersededByAbsenceEventsSeq: Superseded by another AbsenceEvent?
+    :param AbsenceEventTypeCode: Type, linked to luAbsenceEventType
+    :param ID: Student ID
+    :param EventDateTime: datetime
+    :param EventDate: date
+    :param EventTime: time
+    :param CreatedByID: ID of person marking event
+    :param CreatedDate: date
+    :param ModifiedByID: ID of person modifying event
+    :param ModifiedDate: ID of person modifying event
+    :param AbsenceTypeCode: Absence Type, linked to luAbsenceType
+    :param AbsenceReasonCode: Absence Reason, linked to luAbsenceReason
+    :param SchoolInOutStatus: Either 'In', 'Out', or ''
+    :param EnteredInAdvanceFlag: Entered in Advanced
+    :param SystemGeneratedFlag: Generated by the system
+    :param SystemProcessNumber: Unknown
+    :param NoteReceivedFlag: Whether a note was received
+    :param ContactMadeFlag: Contact Made
+    :param ApprovedFlag
+    :param ReportedByID
+    :param ReportedByName
+    :param EventComment
+    :param LeavingWithID
+    :param AbsencePeriodCode
+    :param ContactReceivedFlag
+    //MasterEndAbsenceEventsSeq
+    :param NoteMadeFlag
+    :param TerminalCode
+    :param LinkedID
+
+    :return:
+    """
+
+    # MasterAbsenceEventsSeq should default to AbsenceEventsSeq except when SchoolInOutStatus is both 'In' and 'Out'
     if EventDate is None:
         EventDate = EventDateTime
     if CreatedDate is None:
@@ -185,100 +206,3 @@ def create_absence_events(SupersededByAbsenceEventsSeq=None, AbsenceEventTypeCod
 
     args = {key: value for key, value in locals().items() if value is not None}
     return AttendanceMaster(**args)
-
-
-
-"""
-CLASSES:
-AttendanceMaster
-    Essentially the class the roll is being taken for. Can sometimes get multiple entries per class, perhaps when the 
-    roll has been exited and gone back into
-tAttendances
-    Each Student attendance
-Absence Events
-    Each Absence event
-
------------------------
-
-ATTRIBUTES:
-
-AttendanceMaster:
-    AttendanceMasterSeq: Primary Key. No need to specify
-    CreatedDate: Time the roll was taken
-    CreatedByID: ID of the staff member taking the roll  (different to StaffID when a relief is taken)
-    ModifiedDate: Appears to be the same as CreatedDate for most cases
-    ModifiedByID: Appears to be the same as CreatedByID for most cases
-    FileType: FileType for the class
-    FileYear: FileYear for the class
-    FileSemester: FileSemester for the class
-    ClassCampus: ClassCampus for the class
-    ClassCode: ClassCode for the class
-    StaffID: Staff Member of the class  (different to StaffID when a CreatedByID is taken)
-    AttendanceDate: Date of class
-    AttendancePeriod: Period of class
-    AttendanceDateTimeFrom: Start datetime of class
-    AttendanceDateTimeTo: End datetime of class
-    AttendanceDayNumber: Day in timetable cycle
-    TimetableGroup: Always 'T' for academic classes
-    ClassCancelledFlag: Whether the class is cancelled, never happened for academic classes
-    AttendanceOfficerModeFlag: Unknown, always 0
-    SystemProcessNumber: Unknown, always 0
-    SeqLinkedTo: Other record that related to. Maybe used when multiperiod?? but not always
-    MarkRollAsMultiPeriodFlag: Roll as multi-period
-
-tAttendances:
-    AttendanceSeq: Primary Key. No need to specify
-    AttendanceMasterSeq: Foreign key, the roll record it's being entered for
-    ID: Student ID
-    PossibleAbsenceCode: From luAbsenceType
-    PossibleDescription: Custom absence comment
-    AttendedFlag: Attended? 1 or 0
-    ModifiedDate: datetime record was modified
-    ModifiedByID: Who modified?
-    PossibleReasonCode: Not used, probably links to luAbsenceReason
-    UserFlag1: Can't determine the use
-    UserFlag2
-    UserFlag3
-    UserFlag4
-    UserFlag5
-    LateArrivalFlag: Whether the student arrived late
-    LatearrivalTime: Time (sometimes datetime) of Late arrival, NULL when not a late arrival
-    EarlyDepartureFlag: Whether the student left early
-    EarlyDepartureTime: Time (sometimes datetime) of early departure, NULL when not a early departure
-    AbsenceEventsSeq: Link to the absence events table
-    NonAttendCreatedAbsenceEventsFlag: Absence event created by not marked as absent
-    
-AbsenceEvents:
-    AbsenceEventsSeq: Primary Key. No need to specify
-    MasterAbsenceEventsSeq: Mostly the same as AbsenceEventsSeq, but is different when both 'in' and 'out' is entered
-    SupersededByAbsenceEventsSeq: Superseded by another AbsenceEvent?
-    AbsenceEventTypeCode: Type, linked to luAbsenceEventType
-    ID: Student ID
-    EventDateTime: datetime
-    EventDate: date
-    EventTime: time
-    CreatedByID: ID of person marking event
-    CreatedDate: date
-    ModifiedByID: ID of person modifying event
-    ModifiedDate: ID of person modifying event
-    AbsenceTypeCode: Absence Type, linked to luAbsenceType
-    AbsenceReasonCode: Absence Reason, linked to luAbsenceReason
-    SchoolInOutStatus: Either 'In', 'Out', or ''
-    EnteredInAdvanceFlag: Entered in Advanced
-    SystemGeneratedFlag: Generated by the system
-    SystemProcessNumber: Unknown
-    NoteReceivedFlag: Whether a note was received
-    ContactMadeFlag: Contact Made
-    ApprovedFlag
-    ReportedByID
-    ReportedByName
-    EventComment
-    LeavingWithID
-    AbsencePeriodCode
-    ContactReceivedFlag
-    MasterEndAbsenceEventsSeq
-    NoteMadeFlag
-    TerminalCode
-    LinkedID
-
-"""
