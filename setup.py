@@ -26,5 +26,5 @@ setup(
     name='synergetic',
     packages=find_packages(include=['synergetic', 'synergetic.*', 'synergetic.Attendance']),
     url='https://github.com/mitchr1598/synergetic',
-    version='0.0.3',
+    version='0.0.4',
 )

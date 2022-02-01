@@ -75,7 +75,6 @@ def create_attendance_master(CreatedDate=dt.datetime.now(), CreatedByID=None, Mo
     :return:
     """
 
-
     if CreatedByID is None:
         CreatedByID = StaffID
     if ModifiedDate is None:
