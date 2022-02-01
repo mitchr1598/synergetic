@@ -30,9 +30,8 @@ luAbsenceEventType = Base.classes.luAbsenceEventType
 # https://techcommunity.microsoft.com/t5/sql-server-blog/update-with-output-clause-8211-triggers-8211-and-sqlmoreresults/ba-p/383457
 # https://stackoverflow.com/questions/47513622/dealing-with-triggers-in-sqlalchemy-when-inserting-into-table
 AttendanceMaster.__table__.implicit_returning = False
+tAttendances.__table__.implicit_returning = False
 
-
-# tAttendances.__table__.implicit_returning = False
 # AbsenceEvents.__table__.implicit_returning = False
 
 
@@ -190,7 +189,6 @@ def create_absence_events(SupersededByAbsenceEventsSeq=None, AbsenceEventTypeCod
 
 
 """
-
 CLASSES:
 AttendanceMaster
     Essentially the class the roll is being taken for. Can sometimes get multiple entries per class, perhaps when the 
