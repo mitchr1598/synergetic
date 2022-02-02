@@ -23,7 +23,7 @@ for class_ in [StaffSchedule, StaffScheduleStudentClasses]:
     class_.__table__.implicit_returning = False
 
 
-class MissingClassError(Exception):
+class MissingValueError(Exception):
     pass
 
 
@@ -81,11 +81,11 @@ def create_staff_schedule(StaffID=0,
     :return:
     """
     if SubjectClassesSeq is None:
-        raise MissingClassError("SubjectClassSeq is required to create a staff schedule but is missing.")
+        raise MissingValueError("SubjectClassSeq is required to create a StaffSchedule but is missing.")
     if ScheduleDateTimeFrom is None:
         ScheduleDateTimeFrom = dt.datetime.now()
     if ScheduleDateTimeTo is None:
-        ScheduleDateTimeTo = dt.datetime.now()
+        ScheduleDateTimeTo = ScheduleDateTimeFrom + dt.timedelta(minutes=60)
     if ScheduleDateFrom is None:
         ScheduleDateFrom = ScheduleDateTimeFrom.date()
     if ScheduleTimeFrom is None:
@@ -100,5 +100,56 @@ def create_staff_schedule(StaffID=0,
     return StaffSchedule(**args)
 
 
+def create_staff_schedule_student_classes(StaffScheduleSeq=None, FileType='A',
+                                          FileYear=CURRENT_YEAR, FileSemester=CURRENT_SEMESTER, ClassCampus='S',
+                                          ClassCode=None, ID=0,
+                                          AttendedFlag=None, SubjectClassesSeq=None, ConfirmedDateTime=None,
+                                          ConfirmedByUser='', PossibleAbsenceCode=None, PossibleReasonCode=None,
+                                          PossibleDescription=None):
+    """
+    Creates a StaffSchedule instance. This is where rolls are marked when using the schedules section of a class.
 
+    Example usage:
+    create_staff_schedule_student_classes(StaffScheduleSeq=123456, FileType='SS',
+                                          FileYear=2022, FileSemester=1, ClassCampus='S',
+                                          ClassCode=13FUN01,
+                                          ID=51047,
+                                          AttendedFlag=0,
+                                          SubjectClassesSeq=654321,
+                                          PossibleAbsenceCode=EXCUR,
+                                          PossibleReasonCode=SPO,
+                                          PossibleDescription='Sport Excursion')
+
+    :param StaffScheduleSeq:
+    :param FileType:
+    :param FileYear:
+    :param FileSemester:
+    :param ClassCampus:
+    :param ClassCode:
+    :param ID:
+    :param AttendedFlag:
+    :param SubjectClassesSeq:
+    :param ConfirmedDateTime:
+    :param ConfirmedByUser:
+    :param PossibleAbsenceCode:
+    :param PossibleReasonCode:
+    :param PossibleDescription:
+    :return:
+    """
+    if StaffScheduleSeq is None:
+        raise MissingValueError("StaffScheduleSeq is required to create a StaffScheduleStudentClasses instance but is "
+                                "missing.")
+    if ClassCode is None:
+        raise MissingValueError("ClassCode is required to create a StaffScheduleStudentClasses instance but is "
+                                "missing.")
+    if SubjectClassesSeq is None:
+        raise MissingValueError("SubjectClassesSeq is required to create a StaffScheduleStudentClasses instance but is "
+                                "missing.")
+    if AttendedFlag is None:
+        AttendedFlag = 1
+    if ConfirmedDateTime is None:
+        ConfirmedDateTime = dt.datetime.now()
+
+    args = {key: value for key, value in locals().items() if value is not None}
+    return StaffScheduleStudentClasses(**args)
 
