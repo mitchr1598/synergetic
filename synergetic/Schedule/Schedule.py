@@ -120,20 +120,20 @@ def create_staff_schedule_student_classes(StaffScheduleSeq=None, FileType='A',
                                           PossibleReasonCode=SPO,
                                           PossibleDescription='Sport Excursion')
 
-    :param StaffScheduleSeq:
-    :param FileType:
-    :param FileYear:
-    :param FileSemester:
-    :param ClassCampus:
-    :param ClassCode:
-    :param ID:
-    :param AttendedFlag:
-    :param SubjectClassesSeq:
-    :param ConfirmedDateTime:
-    :param ConfirmedByUser:
-    :param PossibleAbsenceCode:
-    :param PossibleReasonCode:
-    :param PossibleDescription:
+    :param StaffScheduleSeq:  The Staff Schedule this is linked to
+    :param FileType: Of the class in question
+    :param FileYear: Of the class in question
+    :param FileSemester: Of the class in question
+    :param ClassCampus: Of the class in question
+    :param ClassCode: Of the class in question
+    :param ID: Of the student in question
+    :param AttendedFlag: Whether they attended
+    :param SubjectClassesSeq: Of the class in question
+    :param ConfirmedDateTime: Always null, must be some confirmation thing in Synergetic somewhere
+    :param ConfirmedByUser: Always null, must be some confirmation thing in Synergetic somewhere
+    :param PossibleAbsenceCode: From luAbsenceType
+    :param PossibleReasonCode: From luAbsenceReason
+    :param PossibleDescription: Custom description of the absence
     :return:
     """
     if StaffScheduleSeq is None:
@@ -147,8 +147,6 @@ def create_staff_schedule_student_classes(StaffScheduleSeq=None, FileType='A',
                                 "missing.")
     if AttendedFlag is None:
         AttendedFlag = 1
-    if ConfirmedDateTime is None:
-        ConfirmedDateTime = dt.datetime.now()
 
     args = {key: value for key, value in locals().items() if value is not None}
     return StaffScheduleStudentClasses(**args)
