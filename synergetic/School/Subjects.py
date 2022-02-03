@@ -18,7 +18,7 @@ class SubjectClasses(Base):
     __tablename__ = 'SubjectClasses'
 
     @classmethod
-    def from_seq_query(cls, seq):
+    def from_seq(cls, seq):
         query = select(SubjectClasses).filter_by(SubjectClassesSeq=seq)
         with Synergetic.test() as session:
             subject_class = session.execute(query).scalars().all()
@@ -28,7 +28,7 @@ class SubjectClasses(Base):
         return subject_class[0]
 
     @classmethod
-    def from_class_code_query(cls, classcode, filetype='A', fileyear=CURRENT_YEAR, filesemester=CURRENT_SEMESTER, classcampus='S'):
+    def from_class_code(cls, classcode, filetype='A', fileyear=CURRENT_YEAR, filesemester=CURRENT_SEMESTER, classcampus='S'):
         query = select(SubjectClasses).filter_by(classcode=classcode,
                                                  filetype=filetype,
                                                  fileyear=fileyear,
