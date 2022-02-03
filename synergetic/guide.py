@@ -23,8 +23,8 @@ def main():
     atten_master = create_attendance_master()
     with Synergetic.test() as session:
         session.add(atten_master)
-        #session.rollback()
-        session.commit()
+        session.rollback()
+        #session.commit()
 
 
 if __name__ == '__main__':

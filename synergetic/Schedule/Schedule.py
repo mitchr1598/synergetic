@@ -1,6 +1,7 @@
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import create_engine, MetaData
 from synergetic.School import CURRENT_YEAR, CURRENT_SEMESTER
+from synergetic.School import SubjectClasses
 import datetime as dt
 
 engine_test = create_engine("mssql+pyodbc://@SynTest")
@@ -101,7 +102,7 @@ def create_staff_schedule(StaffID=0,
 
 
 def create_staff_schedule_student_classes(StaffScheduleSeq=None, FileType='A',
-                                          FileYear=CURRENT_YEAR, FileSemester=CURRENT_SEMESTER, ClassCampus='S',
+                                          FileYear=None, FileSemester=None, ClassCampus='S',
                                           ClassCode=None, ID=0,
                                           AttendedFlag=None, SubjectClassesSeq=None, ConfirmedDateTime=None,
                                           ConfirmedByUser='', PossibleAbsenceCode=None, PossibleReasonCode=None,
@@ -143,6 +144,8 @@ def create_staff_schedule_student_classes(StaffScheduleSeq=None, FileType='A',
         raise MissingValueError("ClassCode is required to create a StaffScheduleStudentClasses instance but is "
                                 "missing.")
     if SubjectClassesSeq is None:
+        sc = SubjectClasses.from_class_code_query(ClassCode, filetype=FileType, fileyear=FileYear,
+                                                  filesemester=FileSemester, classcampus=FileSemester)
         raise MissingValueError("SubjectClassesSeq is required to create a StaffScheduleStudentClasses instance but is "
                                 "missing.")
     if AttendedFlag is None:
