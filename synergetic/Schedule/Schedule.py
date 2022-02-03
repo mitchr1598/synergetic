@@ -28,6 +28,7 @@ class StaffSchedule(Base):
         if len(subject_class) != 1:
             raise errors.LookUpError(f"Database lookup return {len(subject_class)} results, when 1 was expected"
                                      f"\n{locals()=}")
+        return subject_class[0]
 
 
 Base.prepare()
