@@ -1,8 +1,11 @@
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import create_engine, MetaData
+from sqlalchemy.sql import select
 from synergetic.School import CURRENT_YEAR, CURRENT_SEMESTER
 from synergetic.School import SubjectClasses
+from synergetic.synergetic_session import Synergetic
 import datetime as dt
+import synergetic.errors as errors
 
 engine_test = create_engine("mssql+pyodbc://@SynTest")
 
@@ -12,20 +15,24 @@ metadata.reflect(engine_test, only=['StaffSchedule',
                                     'StaffScheduleStudentClasses'])
 
 Base = automap_base(metadata=metadata)
+
+
+class StaffSchedule(Base):
+    __tablename__ = 'SubjectClasses'
+
+    @classmethod
+    def from_subject_class_seq_date_from(cls, subject_class_seq, date_time_from):
+        query = select(SubjectClasses).filter_by(SubjectClassesSeq=subject_class_seq, DateFrom=date_time_from)
+        with Synergetic.test() as session:
+            subject_class = session.execute(query).scalars().all()
+        if len(subject_class) != 1:
+            raise errors.LookUpError(f"Database lookup return {len(subject_class)} results, when 1 was expected"
+                                     f"\n{locals()=}")
+
+
 Base.prepare()
 
-StaffSchedule = Base.classes.StaffSchedule
 StaffScheduleStudentClasses = Base.classes.StaffScheduleStudentClasses
-
-# Used to stop output command as SQL alchemy doesn't seem to allow "OUTPUT INTO"
-# https://techcommunity.microsoft.com/t5/sql-server-blog/update-with-output-clause-8211-triggers-8211-and-sqlmoreresults/ba-p/383457
-# https://stackoverflow.com/questions/47513622/dealing-with-triggers-in-sqlalchemy-when-inserting-into-table
-for class_ in [StaffSchedule, StaffScheduleStudentClasses]:
-    class_.__table__.implicit_returning = False
-
-
-class MissingValueError(Exception):
-    pass
 
 
 def create_staff_schedule(StaffID=0,
@@ -82,7 +89,7 @@ def create_staff_schedule(StaffID=0,
     :return:
     """
     if SubjectClassesSeq is None:
-        raise MissingValueError("SubjectClassSeq is required to create a StaffSchedule but is missing.")
+        raise errors.MissingValueError("SubjectClassSeq is required to create a StaffSchedule but is missing.")
     if ScheduleDateTimeFrom is None:
         ScheduleDateTimeFrom = dt.datetime.now()
     if ScheduleDateTimeTo is None:
@@ -97,6 +104,7 @@ def create_staff_schedule(StaffID=0,
         ScheduleTimeTo = ScheduleDateTimeTo.time()
     if ModifiedDatetime is None:
         ModifiedDatetime = dt.datetime.now()
+
     args = {key: value for key, value in locals().items() if value is not None}
     return StaffSchedule(**args)
 
@@ -138,16 +146,15 @@ def create_staff_schedule_student_classes(StaffScheduleSeq=None, FileType='A',
     :return:
     """
     if StaffScheduleSeq is None:
-        raise MissingValueError("StaffScheduleSeq is required to create a StaffScheduleStudentClasses instance but is "
-                                "missing.")
+        raise errors.MissingValueError("StaffScheduleSeq is required to create a StaffScheduleStudentClasses instance"
+                                       "but is missing.")
     if ClassCode is None:
-        raise MissingValueError("ClassCode is required to create a StaffScheduleStudentClasses instance but is "
-                                "missing.")
+        raise errors.MissingValueError("ClassCode is required to create a StaffScheduleStudentClasses instance but is "
+                                       "missing.")
     if SubjectClassesSeq is None:
         sc = SubjectClasses.from_class_code_query(ClassCode, filetype=FileType, fileyear=FileYear,
                                                   filesemester=FileSemester, classcampus=FileSemester)
-        raise MissingValueError("SubjectClassesSeq is required to create a StaffScheduleStudentClasses instance but is "
-                                "missing.")
+        SubjectClassesSeq = sc.SubjectClassesSeq
     if AttendedFlag is None:
         AttendedFlag = 1
 
