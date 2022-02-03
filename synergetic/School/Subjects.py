@@ -1,6 +1,7 @@
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.sql import select
+from sqlalchemy.orm import relationship
 from synergetic.synergetic_session import Synergetic
 from synergetic.School import CURRENT_YEAR, CURRENT_SEMESTER
 import synergetic.errors as errors
@@ -30,8 +31,8 @@ class SubjectClasses(Base):
 
     @classmethod
     def from_class_code(cls, classcode, filetype='A', fileyear=CURRENT_YEAR, filesemester=CURRENT_SEMESTER, classcampus='S'):
-        query = select(SubjectClasses).filter_by(classcode=classcode, filetype=filetype, fileyear=fileyear,
-                                                 filesemester=filesemester, classcampus=classcampus)
+        query = select(SubjectClasses).filter_by(ClassCode=classcode, FileType=filetype, FileYear=fileyear,
+                                                 FileSemester=filesemester, ClassCampus=classcampus)
         with Synergetic.test() as session:
             subject_class = session.execute(query).scalars().all()
         if len(subject_class) != 1:

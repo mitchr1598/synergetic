@@ -4,6 +4,7 @@ from sqlalchemy.sql import select
 from synergetic.School import CURRENT_YEAR, CURRENT_SEMESTER
 from synergetic.School import SubjectClasses
 from synergetic.synergetic_session import Synergetic
+from sqlalchemy.orm import relationship
 import datetime as dt
 import synergetic.errors as errors
 
@@ -19,6 +20,7 @@ Base = automap_base(metadata=metadata)
 
 class StaffSchedule(Base):
     __tablename__ = 'SubjectClasses'
+    subjectclasses = relationship("SubjectClasses", backref="staffschedule")
 
     @classmethod
     def from_subject_class_seq_date_from(cls, subject_class_seq, date_time_from):
@@ -30,6 +32,8 @@ class StaffSchedule(Base):
                                      f"\n{locals()=}")
         return subject_class[0]
 
+
+SubjectClasses.staffschedule = relationship("StaffSchedule", backref="subjectclasses")
 
 Base.prepare()
 
@@ -105,8 +109,36 @@ def create_staff_schedule(StaffID=0,
         ScheduleTimeTo = ScheduleDateTimeTo.time()
     if ModifiedDatetime is None:
         ModifiedDatetime = dt.datetime.now()
-
-    args = {key: value for key, value in locals().items() if value is not None}
+    args = {
+        'StaffID': StaffID,
+        'SubjectClassesSeq': SubjectClassesSeq,
+        'ScheduleDateTimeFrom': ScheduleDateTimeFrom,
+        'ScheduleDateTimeTo': ScheduleDateTimeTo,
+        'ScheduleDateFrom': ScheduleDateFrom,
+        'ScheduleDateTo': ScheduleDateTo,
+        'ScheduleTimeFrom': ScheduleTimeFrom,
+        'ScheduleTimeTo': ScheduleTimeTo,
+        'Comment': Comment,
+        'Room': Room,
+        'TeamCode': TeamCode,
+        'ParentStaffScheduleSeq': ParentStaffScheduleSeq,
+        'AttendanceCreatedByDate': AttendanceCreatedByDate,
+        'AttendanceCreatedByID': AttendanceCreatedByID,
+        'AttendanceModifiedByDate': AttendanceModifiedByDate,
+        'AttendanceModifiedByID': AttendanceModifiedByID,
+        'TimesheetsSeq': TimesheetsSeq,
+        'ClassType': ClassType,
+        'ModifiedDateTime': ModifiedDatetime,
+        'LocationCode': LocationCode,
+        'StaffScheduleTypeCode': StaffScheduleTypeCode,
+        'Results': Results,
+        'SummaryNotes': SummaryNotes,
+        'Opposition': Opposition,
+        'ConfirmedDateTime': ConfirmedDateTime,
+        'ConfirmedByUser': ConfirmedByUser,
+        'SystemProcessNumber': SystemProcessNumber
+    }
+    args = {key: value for key, value in args.items() if value is not None}
     return StaffSchedule(**args)
 
 
@@ -158,7 +190,9 @@ def create_staff_schedule_student_classes(StaffScheduleSeq=None, FileType='A',
         SubjectClassesSeq = sc.SubjectClassesSeq
     if AttendedFlag is None:
         AttendedFlag = 1
-
-    args = {key: value for key, value in locals().items() if value is not None}
+    vars = {'StaffScheduleSeq', 'FileType', 'FileYear', 'FileSemester', 'ClassCampus', 'ClassCode', 'ID',
+            'AttendedFlag', 'SubjectClassesSeq', 'ConfirmedDateTime', 'ConfirmedByUser', 'PossibleAbsenceCode',
+            'PossibleReasonCode', 'PossibleDescription'}
+    args = {key: value for key, value in locals().items() if key in vars and value is not None}
     return StaffScheduleStudentClasses(**args)
 
