@@ -4,19 +4,17 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.sql import select
 import datetime as dt
 from synergetic.School import CURRENT_YEAR, CURRENT_SEMESTER
-
-engine_test = create_engine("mssql+pyodbc://@SynTest")
+import synergetic.synergetic_session as syn
 
 # Only deal with these tables
-metadata = MetaData()
-metadata.reflect(engine_test, only=['AttendanceMaster',
-                                    'tAttendances',
-                                    'AbsenceEvents',
-                                    'luAbsenceType',
-                                    'luAbsenceReason',
-                                    'luAbsenceEventType'])
+syn.metadata.reflect(syn.engine, only=['AttendanceMaster',
+                                       'tAttendances',
+                                       'AbsenceEvents',
+                                       'luAbsenceType',
+                                       'luAbsenceReason',
+                                       'luAbsenceEventType'])
 
-Base = automap_base(metadata=metadata)
+Base = automap_base(metadata=syn.metadata)
 Base.prepare()
 
 AttendanceMaster = Base.classes.AttendanceMaster
@@ -31,6 +29,7 @@ luAbsenceEventType = Base.classes.luAbsenceEventType
 # https://stackoverflow.com/questions/47513622/dealing-with-triggers-in-sqlalchemy-when-inserting-into-table
 AttendanceMaster.__table__.implicit_returning = False
 tAttendances.__table__.implicit_returning = False
+
 
 # AbsenceEvents.__table__.implicit_returning = False
 

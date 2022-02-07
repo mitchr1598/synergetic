@@ -1,20 +1,18 @@
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.sql import select
+import synergetic.synergetic_session as syn
 
-
-engine_test = create_engine("mssql+pyodbc://@SynTest")
 
 # Only deal with these tables
-metadata = MetaData()
-metadata.reflect(engine_test, only=['FileSemesters'])
+syn.metadata.reflect(syn.engine, only=['FileSemesters'])
 
-Base = automap_base(metadata=metadata)
+Base = automap_base(metadata=syn.metadata)
 Base.prepare()
 
 FileSemesters = Base.classes.FileSemesters
 
-_res = [row for row in engine_test.execute(
+_res = [row for row in syn.engine.execute(
     select(
         FileSemesters.FileYear,
         FileSemesters.FileSemester

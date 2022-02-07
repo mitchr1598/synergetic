@@ -5,15 +5,13 @@ from sqlalchemy.orm import relationship
 from synergetic.synergetic_session import Synergetic
 from synergetic.School import CURRENT_YEAR, CURRENT_SEMESTER
 import synergetic.errors as errors
+import synergetic.synergetic_session as syn
 
-
-engine_test = create_engine("mssql+pyodbc://@SynTest")
 
 # Only deal with these tables
-metadata = MetaData()
-metadata.reflect(engine_test, only=['SubjectClasses'])
+syn.metadata.reflect(syn.engine, only=['SubjectClasses'])
 
-Base = automap_base(metadata=metadata)
+Base = automap_base(metadata=syn.metadata)
 
 
 class SubjectClasses(Base):

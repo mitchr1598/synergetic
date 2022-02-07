@@ -7,24 +7,20 @@ from synergetic.synergetic_session import Synergetic
 from sqlalchemy.orm import relationship
 import datetime as dt
 import synergetic.errors as errors
+import synergetic.synergetic_session as syn
 
-engine_test = create_engine("mssql+pyodbc://@SynTest")
+syn.metadata.reflect(syn.engine,
+                     only=['StaffSchedule', 'StaffScheduleStudentClasses'])
 
-# Only deal with these tables
-metadata = MetaData()
-metadata.reflect(engine_test, only=['StaffSchedule',
-                                    'StaffScheduleStudentClasses'])
-
-Base = automap_base(metadata=metadata)
+Base = automap_base(metadata=syn.metadata)
 
 
 class StaffSchedule(Base):
     __tablename__ = 'SubjectClasses'
-    subjectclasses = relationship("SubjectClasses", backref="staffschedule")
 
     @classmethod
     def from_subject_class_seq_date_from(cls, subject_class_seq, date_time_from):
-        query = select(SubjectClasses).filter_by(SubjectClassesSeq=subject_class_seq, DateFrom=date_time_from)
+        query = select(StaffSchedule).filter_by(SubjectClassesSeq=subject_class_seq, DateFrom=date_time_from)
         with Synergetic.test() as session:
             subject_class = session.execute(query).scalars().all()
         if len(subject_class) != 1:
@@ -33,9 +29,8 @@ class StaffSchedule(Base):
         return subject_class[0]
 
 
-SubjectClasses.staffschedule = relationship("StaffSchedule", backref="subjectclasses")
-
 Base.prepare()
+
 
 StaffScheduleStudentClasses = Base.classes.StaffScheduleStudentClasses
 
